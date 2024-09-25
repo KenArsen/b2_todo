@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Task{% endblock title %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Edit Task</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                <label for="id_title">Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_status">Status</label>
+                {{ form.status }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_due_date">Due Date</label>
+                {{ form.due_date }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_category">Category</label>
+                {{ form.category }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_priority">Priority</label>
+                {{ form.priority }}
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    Update Task
+                </button>
+
+                <a href="{% url 'list-task' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+        <br>
+    </div>
+
+    <style>
+        .button-group {
+            display: flex;
+            gap: 10px; /* Отступ между кнопками */
+            margin-top: 20px; /* Отступ сверху для кнопок */
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+{% endblock content %}
