@@ -8,24 +8,18 @@
         <a href="{% url 'create-task' %}" class="btn btn-primary" style="margin-bottom: 20px;">Создать</a>
 
         <!-- Форма поиска с фильтрами -->
-        <form method="GET" style="margin-bottom: 20px;">
-            <input type="text" name="search_task" placeholder="Поиск по задачам" value="{{ request.GET.search_task }}">
-            <select name="category" id="category">
-                <option value="">Все категории</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}"
-                            {% if category.id == request.GET.category %}selected{% endif %}>{{ category.name }}</option>
-                {% endfor %}
-            </select>
-            <select name="priority" id="priority">
-                <option value="">Все приоритеты</option>
-                {% for priority in priorities %}
-                    <option value="{{ priority.id }}"
-                            {% if priority.id == request.GET.priority %}selected{% endif %}>{{ priority.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-search">Поиск</button>
+        <form method="GET" id="filter-form" style="margin-bottom: 20px; display: flex; align-items: center;">
+            <div style="display: flex; align-items: center; margin-right: 10px;">
+                {{ form.search_task }}
+                <button type="submit" class="btn btn-search" style="margin-left: 10px;">Поиск</button>
+            </div>
+            <div style="display: flex; align-items: center;">
+                {{ form.category }}
+                {{ form.priority }}
+            </div>
+            <a href="{% url 'list-task' %}" class="btn btn-clear" style="margin-left: 10px;">Clear</a>
         </form>
+
 
         {% if tasks %}
             <table>
@@ -42,7 +36,7 @@
                 </thead>
                 <tbody>
                 {% for task in tasks %}
-                    <tr {% if task.due_date < today %}style="background-color: #f8d7da;" {% endif %}>
+                    <tr {% if task.due_date < today and not task.status %}style="background-color: #f8d7da;" {% endif %}>
                         <td>{{ task.title }}</td>
                         <td>{{ task.description|default:"No description" }}</td>
                         <td>
@@ -84,15 +78,20 @@
             margin-bottom: 20px;
         }
 
-        input[type="text"] {
-            flex: 1;
-            padding: 8px;
-            border: 1px solid #ddd;
+        .btn-clear {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 12px;
             border-radius: 4px;
-            margin-right: 10px;
+            text-decoration: none;
+            margin-left: 10px;
         }
 
-        select {
+        .btn-clear:hover {
+            background-color: #5a6268;
+        }
+
+        input[type="text"], select {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -180,9 +179,14 @@
         }
     </style>
 
-    {% comment %}
-    Добавьте контекст для today в ваш views.py, чтобы это работало:
-    from django.utils import timezone
-    today = timezone.now().date()
-    {% endcomment %}
+    <script>
+        // Автоматическая отправка формы при изменении категории или приоритета
+        document.getElementById('id_category').addEventListener('change', function () {
+            document.getElementById('filter-form').submit();
+        });
+
+        document.getElementById('id_priority').addEventListener('change', function () {
+            document.getElementById('filter-form').submit();
+        });
+    </script>
 {% endblock content %}

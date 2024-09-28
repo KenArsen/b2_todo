@@ -2,44 +2,84 @@ from django.shortcuts import render, redirect
 from django.utils import timezone
 
 from task.models import Task, Category, Priority
-from task.forms import TaskForm
+from task.forms import TaskForm, TaskFilterForm
 
 
 def list_tasks(request):
-    tasks = Task.objects.all()
-    categories = Category.objects.all()
-    priorities = Priority.objects.all()
     today = timezone.now().date()
-    return render(
-        request,
-        'task/task_list.html',
-        {
-            'tasks': tasks,
-            'categories': categories,
-            'priorities': priorities,
-            'today': today,
-        }
-    )
+
+    form = TaskFilterForm(request.GET or None)
+    tasks = Task.objects.all()
+
+    if form.is_valid():
+        search_task = form.cleaned_data.get('search_task')
+        category = form.cleaned_data.get('category')
+        priority = form.cleaned_data.get('priority')
+
+        if search_task:
+            tasks = tasks.filter(title__icontains=search_task)
+        if category:
+            tasks = tasks.filter(category=category)
+        if priority:
+            tasks = tasks.filter(priority=priority)
+
+    return render(request, 'task/task_list.html', {
+        'tasks': tasks,
+        'today': today,
+        'form': form,
+    })
 
 
 def tasks_by_category(request, category_id):
     category = Category.objects.get(id=category_id)
+    today = timezone.now().date()
+
+    form = TaskFilterForm(request.GET or None)
     tasks = Task.objects.filter(category=category)
-    return render(
-        request,
-        'task/task_list.html',
-        {'tasks': tasks}
-    )
+
+    if form.is_valid():
+        search_task = form.cleaned_data.get('search_task')
+        category = form.cleaned_data.get('category')
+        priority = form.cleaned_data.get('priority')
+
+        if search_task:
+            tasks = tasks.filter(title__icontains=search_task)
+        if category:
+            tasks = tasks.filter(category=category)
+        if priority:
+            tasks = tasks.filter(priority=priority)
+
+    return render(request, 'task/task_list.html', {
+        'tasks': tasks,
+        'today': today,
+        'form': form,
+    })
 
 
 def tasks_by_priority(request, priority_id):
     priority = Priority.objects.get(id=priority_id)
+    today = timezone.now().date()
+
+    form = TaskFilterForm(request.GET or None)
     tasks = Task.objects.filter(priority=priority)
-    return render(
-        request,
-        'task/task_list.html',
-        {'tasks': tasks}
-    )
+
+    if form.is_valid():
+        search_task = form.cleaned_data.get('search_task')
+        category = form.cleaned_data.get('category')
+        priority = form.cleaned_data.get('priority')
+
+        if search_task:
+            tasks = tasks.filter(title__icontains=search_task)
+        if category:
+            tasks = tasks.filter(category=category)
+        if priority:
+            tasks = tasks.filter(priority=priority)
+
+    return render(request, 'task/task_list.html', {
+        'tasks': tasks,
+        'today': today,
+        'form': form,
+    })
 
 
 def create_task(request):
